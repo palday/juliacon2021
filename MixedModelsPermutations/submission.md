@@ -1,7 +1,7 @@
 ---
 title: "Non-parametric Methods for Mixed-Effects Models of EEG Data"
 abstract: |
-   Permutation-based testing has become exceptionally popular in the analysis of neuroimaging data, but so far has depended on two-stage analyses to handle repeated measures data in order to be computationally tractable. We introduce MixedModelsPermutations to perform fast permutation-based inference on mixed models. Using mixed models instead of a two-stage approach allows us to properly represent crossed and nested designs, explicitly modelling multiple sources of variability and unbalanced designs.
+   Permutation-based testing has become exceptionally popular in the analysis of neuroimaging data, but so far has depended on two-stage analyses to handle repeated measures data in order to be computationally tractable. We introduce MixedModelsPermutations to perform fast permutation-based inference on mixed models. Using mixed models instead of a two-stage approach enables properly representing crossed and nested designs, explicitly modelling multiple sources of variability and unbalanced designs.
 ---
 
 Permutation-based testing has become exceptionally popular in the analysis of neuroimaging data, but so far has depended on two-stage analyses to handle repeated measures data in order to be computationally tractable. 
