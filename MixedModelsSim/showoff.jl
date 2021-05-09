@@ -20,7 +20,7 @@ begin
 	using MixedModels, MixedModelsSim
 	using PlutoUI
 	using Random
-	cache = LRU(;maxsize=1000)
+	cache = LRU(;maxsize=10_000)
 	nothing
 end
 
@@ -109,7 +109,7 @@ md"Number of simulations"
 @bind n_sim Slider(10:1000; default=100, show_value=true)
 
 # ╔═╡ dd586970-9cb9-425e-8492-af194730c371
-get!(cache, (n_sim, n_subj, n_item, s_item_intercept, s_item_context, s_subj_intercept, s_subj_frequency, s_subj_context, s_subj_interaction, β, σ)) do 
+get!(cache, (contrasts, n_sim, n_subj, n_item, s_item_intercept, s_item_context, s_subj_intercept, s_subj_frequency, s_subj_context, s_subj_interaction, β, σ)) do 
 	global m0
 	design = simdat_crossed(MersenneTwister(42), n_subj, n_item;
                              item_btwn = item_btwn,
@@ -158,4 +158,4 @@ coefnames(m0)
 # ╟─b6a549f9-acff-40a1-98fd-41affd1fd3c3
 # ╟─892ad822-4af3-4410-8e27-46ee175ac513
 # ╟─c60759a8-729d-4c1d-84bc-718abe575144
-# ╠═dd586970-9cb9-425e-8492-af194730c371
+# ╟─dd586970-9cb9-425e-8492-af194730c371

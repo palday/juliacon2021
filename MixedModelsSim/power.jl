@@ -63,9 +63,6 @@ For specifying the number of items and subjects, we're going to use a bit of int
 # ╔═╡ 0ea1d41b-d225-4082-aa6b-5bc80beda96b
 @bind n_subj Slider(10:100; default=40, show_value=true)
 
-# ╔═╡ 1416e1c8-0c61-430d-9ecb-9bda5566bdcf
-
-
 # ╔═╡ 9c989bb9-8a7e-4746-9919-1abb20a9ddef
 @bind n_item Slider(10:100; default=40, show_value=true)
 
@@ -138,11 +135,21 @@ We can now create the associated covariance matrices.[^cholesky]
 [^cholesky]: Technically, we're creating the lower Cholesky factor of these matrices, which is a bit like the matrix square root. In other words, we're creating the matrix form of standard deviations instead of the matrix form of the variances.]
 """
 
+# ╔═╡ dc548a77-e0a5-4cfb-9371-06e48bd25f13
+corr_item = [+1.0 +0.2 +0.5 
+	         +0.2 +1.0 -0.3
+	         +0.5 -0.3 +1.0]
+
 # ╔═╡ 872d9fcf-6ed4-4533-92b2-669a158a460c
-re_item = create_re(1.3, 0.35, 0.75)
+re_item = create_re(1.3, 0.35, 0.75; corrmat=corr_item)
+
+# ╔═╡ 90dd7f51-822d-4ebb-906c-afd9649f3e83
+corr_subj = [+1.0 -0.5 +0.0 
+	         -0.5 +1.0 +0.8
+	         +0.0 +0.8 +1.0]
 
 # ╔═╡ b370aa4e-1341-45c5-9ab8-e4f29ef28e98
-re_subj = create_re(1.5, 0.5, 0.75)
+re_subj = create_re(1.5, 0.5, 0.75; corrmat=corr_subj)
 
 # ╔═╡ 0414d540-7f4c-4231-8e01-3c097d13b538
 md"""
@@ -176,7 +183,7 @@ The last two components we need are the residual variance and the effect sizes f
 """
 
 # ╔═╡ c4666325-da0d-412e-8f2e-ae71c7f46bda
-σ = 5
+σ = 6
 
 # ╔═╡ bc087a8a-a183-4b17-a566-4561eac5d668
 β = [1.0, -1.0, 2.0, -1.5, 0.3, -1.3, 1.4, 0]
@@ -200,7 +207,7 @@ In MixedModels.jl, you can specify different parameter values, such as the ones
 """
 
 # ╔═╡ a2e16602-7d63-4fce-aed0-55a40febd3e7
-@bind n_sim Slider(10:1000; default=20, show_value=true)
+@bind n_sim Slider(10:1000; default=100, show_value=true)
 
 # ╔═╡ ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
 sim = parametricbootstrap(MersenneTwister(12321), n_sim, m0; β=β, σ=σ, θ=θ)
@@ -215,9 +222,6 @@ Finally, we can turn this into a power table:
 # ╔═╡ 6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
 ptbl = DataFrame(power_table(sim))
 
-# ╔═╡ a9ef2b7d-a793-4645-9520-66a1bdab7bb2
-
-
 # ╔═╡ Cell order:
 # ╟─288bb980-b105-11eb-1687-73eaf51c6e80
 # ╠═d951e119-09f7-4b4e-a155-7e1ce0459317
@@ -227,7 +231,6 @@ ptbl = DataFrame(power_table(sim))
 # ╠═47f0e82d-abec-421a-a0a0-03d791dddf70
 # ╟─099c1425-43fb-4121-b609-fc2894e344cb
 # ╠═0ea1d41b-d225-4082-aa6b-5bc80beda96b
-# ╠═1416e1c8-0c61-430d-9ecb-9bda5566bdcf
 # ╠═9c989bb9-8a7e-4746-9919-1abb20a9ddef
 # ╠═823f06a3-1ba6-4c5f-b842-d2dee7bc8d3e
 # ╟─04e3ba6d-83d1-4d9b-93b8-b72ed738972d
@@ -237,7 +240,9 @@ ptbl = DataFrame(power_table(sim))
 # ╟─51db88e8-0658-4d5f-b299-ea1b9f1939f8
 # ╠═69a18181-f46e-4c9e-a79f-80db0d9fc902
 # ╟─3e3dc064-5854-4ec5-b710-a4cca1c17060
+# ╠═dc548a77-e0a5-4cfb-9371-06e48bd25f13
 # ╠═872d9fcf-6ed4-4533-92b2-669a158a460c
+# ╠═90dd7f51-822d-4ebb-906c-afd9649f3e83
 # ╠═b370aa4e-1341-45c5-9ab8-e4f29ef28e98
 # ╟─0414d540-7f4c-4231-8e01-3c097d13b538
 # ╠═4496e1bc-f4d7-41ac-bd36-8a75c4725fdf
@@ -253,4 +258,3 @@ ptbl = DataFrame(power_table(sim))
 # ╠═ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
 # ╟─c4fadf55-c23d-435b-b6b5-40a7301674a6
 # ╠═6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
-# ╠═a9ef2b7d-a793-4645-9520-66a1bdab7bb2
