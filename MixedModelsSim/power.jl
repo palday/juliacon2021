@@ -82,7 +82,9 @@ Typically, we will want to scale that, but we can do that in the simulation step
 Also, this dependent variable is *pure noise*: we haven't yet added in effects.
 Adding in effects also comes in the simulation step.
 
-But before we get to simulating, let's fit the model to the noise, just to see how things look. We're going to use effects coding for our contrasts.
+Having the dependent variable already present and filled with noise allows us to fit a model and use the tooling around models instead of doing all the linear algebra ourselves.
+
+So before we get to simulating, let's fit the model to the noise, just to see how things look. We're going to use effects coding for our contrasts.
 """
 
 # ╔═╡ 95c03f4a-6e86-4fab-b706-039834b06c4d
@@ -136,7 +138,7 @@ We can now create the associated covariance matrices.[^cholesky]
 """
 
 # ╔═╡ dc548a77-e0a5-4cfb-9371-06e48bd25f13
-corr_item = [+1.0 +0.2 +0.5 
+corr_item = [+1.0 +0.2 +0.5
 	         +0.2 +1.0 -0.3
 	         +0.5 -0.3 +1.0]
 
@@ -144,7 +146,7 @@ corr_item = [+1.0 +0.2 +0.5
 re_item = create_re(1.3, 0.35, 0.75; corrmat=corr_item)
 
 # ╔═╡ 90dd7f51-822d-4ebb-906c-afd9649f3e83
-corr_subj = [+1.0 -0.5 +0.0 
+corr_subj = [+1.0 -0.5 +0.0
 	         -0.5 +1.0 +0.8
 	         +0.0 +0.8 +1.0]
 
@@ -159,8 +161,10 @@ Note that we have to specify them in the same order as in the output from `VarCo
 
 # ╔═╡ 4496e1bc-f4d7-41ac-bd36-8a75c4725fdf
 begin
-	update!(m0, re_item, re_subj)
-	VarCorr(m0)
+	# we make a copy to avoid changing the results above with reactivity
+	m1 = deepcopy(m0)
+	update!(m1, re_item, re_subj)
+	VarCorr(m1)
 end
 
 # ╔═╡ 631ab549-c771-4974-a3d0-2c6a26e90f73
@@ -173,7 +177,7 @@ This compact form is the parameter vector θ and we can get it back out of the m
 """
 
 # ╔═╡ f0fefbcb-51b8-458e-9fe0-96c1820e0b56
-θ = m0.θ
+θ = m1.θ
 
 # ╔═╡ 733ea084-7bf0-4658-9b37-dd9a749dee53
 md"""
@@ -183,7 +187,7 @@ The last two components we need are the residual variance and the effect sizes f
 """
 
 # ╔═╡ c4666325-da0d-412e-8f2e-ae71c7f46bda
-σ = 6
+σ = 1
 
 # ╔═╡ bc087a8a-a183-4b17-a566-4561eac5d668
 β = [1.0, -1.0, 2.0, -1.5, 0.3, -1.3, 1.4, 0]
@@ -194,13 +198,38 @@ The entries in the β correspond to the coefficients in the model given by
 """
 
 # ╔═╡ 16ecfacb-f118-4358-b9b1-385f39bbc293
-coefnames(m0)
+coefnames(m1)
 
 # ╔═╡ 1e0c3594-dec8-4bc6-8801-70382f3df7a5
 md"""
-## Simulate
+## Simulate a Single Dataset
 
 Now we're ready to actually simulate our data.
+Let's start small and simulate a single dataset and see if we're able to recover our parameter values.
+"""
+
+# ╔═╡ aa4ddaa2-f9b3-40b1-8f41-3d7478476948
+begin
+	# making a deepcopy here so that our previews above aren't impacted
+	m_test = simulate!(MersenneTwister(42), deepcopy(m1); β=β, σ=σ)
+	refit!(m_test)
+end
+
+# ╔═╡ fa18b2f3-ef07-4920-8684-8b963714545c
+coef(m_test)
+
+# ╔═╡ d0c1a83e-5b22-4edd-beb6-dcfb435d3eb5
+md"""
+The estimates aren't perfect, but most of them are within a single standard error of the true values, which is a good sign.
+"""
+
+# ╔═╡ 8af80b54-eff9-4a72-a269-811f7940f057
+abs.(coef(m_test) - β) .< stderror(m_test)
+
+# ╔═╡ 5f58663b-ca74-405d-b6e7-eb1a4cf856ba
+md"""
+## Simulate a Lot of Datasets
+
 We can use `parametricbootstrap` to do this: the parametric bootstrap actually works by simulating new data from an existing model and then looking at how the estimates fit to that new data look.
 In MixedModels.jl, you can specify different parameter values, such as the ones
  we made up for our fake data.
@@ -212,6 +241,12 @@ In MixedModels.jl, you can specify different parameter values, such as the ones
 # ╔═╡ ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
 sim = parametricbootstrap(MersenneTwister(12321), n_sim, m0; β=β, σ=σ, θ=θ)
 
+# ╔═╡ b87b7850-8660-4730-a557-2e64d73d36d0
+DataFrame(shortestcovint(sim))
+
+# ╔═╡ 6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
+DataFrame(power_table(sim))
+
 # ╔═╡ c4fadf55-c23d-435b-b6b5-40a7301674a6
 md"""
 ## See your power and profit!
@@ -219,8 +254,64 @@ md"""
 Finally, we can turn this into a power table:
 """
 
-# ╔═╡ 6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
-ptbl = DataFrame(power_table(sim))
+# ╔═╡ 079f3bb8-511d-4993-8189-80df04ef3fc2
+md"""
+These are point estimates for the power. Currently, no confidence intervals or error bars are provided because there isn't a really clear ideal way to do this. (And it's not clear that "confidence interval" is really a appropriate here.)
+
+For today's purposes, we can use the [arcsine transformation](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Arcsine_transformation) to get approximate intervals for power. For values that are close to 0 or 1, we'll use the [rule of 3](https://en.wikipedia.org/wiki/Binomial_proportion_confidence_interval#Rule_of_three_-_for_when_no_successes_are_observed).
+"""
+
+# ╔═╡ 725425d4-dbfa-4cf6-af71-8100170cd72c
+"""
+	powinterval(p, n; atol=0.05)
+
+Compute binomial 95% confidence intervals.
+
+`p` is the estimated probability of success, `n` is the number of trials.
+
+For `p` within `atol` of 0 or 1, the rule of three is used.
+For all other `p`, the arcsine approximation is used.
+"""
+function powinterval(p, n; atol=0.05)
+
+	if (1-p) < atol
+		lower = 1-3/n
+		upper = 1.0
+	elseif p < atol
+		lower = 0.0
+		upper = 3/n
+	else
+		asinp = asin(sqrt(p))
+		zterm = 1.96 / (2 * sqrt(n))
+
+		lower = sin(asinp - zterm)^2
+		upper = sin(asinp + zterm)^2
+	end
+
+	return (lower=round(lower; sigdigits=2), upper=round(upper; sigdigits=2))
+end
+
+# ╔═╡ f736b605-e460-409d-87f0-3847ac39d174
+"""
+	powinterval(n)
+
+Create a function that takes a probability of success and computes a binomial confidence interval for `n` trials.
+"""
+powinterval(n) = p -> powinterval(p, n)
+
+# ╔═╡ 89446f45-5cbf-4644-b9ff-a0158f4b696a
+transform!(DataFrame(power_table(sim)),
+		   :power => ByRow(powinterval(n_sim)) => AsTable)
+
+# ╔═╡ 0e5bbd3e-7373-4ed1-ad3e-354f3453983a
+md"""
+We should also checkout how many fits were singular.
+Singular fits are a sign that we actually don't have enough power to reliably distinguish the participant/item variation from the residual variation.
+If we're not doing a study on individual differences, that's probably okay, but it also suggests we could simplify our model design and make our lives easier.
+"""
+
+# ╔═╡ a0fd546d-4457-4d33-9677-d724254ffdf4
+count(issingular(sim))
 
 # ╔═╡ Cell order:
 # ╟─288bb980-b105-11eb-1687-73eaf51c6e80
@@ -254,7 +345,19 @@ ptbl = DataFrame(power_table(sim))
 # ╟─25762800-7fea-4f2c-b6c2-978d85db45bd
 # ╠═16ecfacb-f118-4358-b9b1-385f39bbc293
 # ╟─1e0c3594-dec8-4bc6-8801-70382f3df7a5
+# ╠═aa4ddaa2-f9b3-40b1-8f41-3d7478476948
+# ╠═fa18b2f3-ef07-4920-8684-8b963714545c
+# ╟─d0c1a83e-5b22-4edd-beb6-dcfb435d3eb5
+# ╠═8af80b54-eff9-4a72-a269-811f7940f057
+# ╟─5f58663b-ca74-405d-b6e7-eb1a4cf856ba
 # ╠═a2e16602-7d63-4fce-aed0-55a40febd3e7
 # ╠═ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
-# ╟─c4fadf55-c23d-435b-b6b5-40a7301674a6
+# ╠═b87b7850-8660-4730-a557-2e64d73d36d0
 # ╠═6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
+# ╟─c4fadf55-c23d-435b-b6b5-40a7301674a6
+# ╟─079f3bb8-511d-4993-8189-80df04ef3fc2
+# ╠═725425d4-dbfa-4cf6-af71-8100170cd72c
+# ╠═f736b605-e460-409d-87f0-3847ac39d174
+# ╠═89446f45-5cbf-4644-b9ff-a0158f4b696a
+# ╟─0e5bbd3e-7373-4ed1-ad3e-354f3453983a
+# ╠═a0fd546d-4457-4d33-9677-d724254ffdf4
