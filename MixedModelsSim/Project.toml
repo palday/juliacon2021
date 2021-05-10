@@ -1,5 +1,9 @@
 [deps]
+AbstractPlotting = "537997a7-5e4e-5d89-9595-2241ea00577e"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
 LRUCache = "8ac3fa9e-de4c-5943-b1dc-09c6b5f20637"
 MixedModels = "ff71e718-51f3-5ec2-a782-8ffcbfa3c316"
 MixedModelsSim = "d5ae56c5-23ca-4a1f-b505-9fc4796fc1fe"
