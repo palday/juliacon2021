@@ -244,15 +244,15 @@ sim = parametricbootstrap(MersenneTwister(12321), n_sim, m0; β=β, σ=σ, θ=θ
 # ╔═╡ b87b7850-8660-4730-a557-2e64d73d36d0
 DataFrame(shortestcovint(sim))
 
-# ╔═╡ 6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
-DataFrame(power_table(sim))
-
 # ╔═╡ c4fadf55-c23d-435b-b6b5-40a7301674a6
 md"""
 ## See your power and profit!
 
 Finally, we can turn this into a power table:
 """
+
+# ╔═╡ 6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
+DataFrame(power_table(sim))
 
 # ╔═╡ 079f3bb8-511d-4993-8189-80df04ef3fc2
 md"""
@@ -263,7 +263,7 @@ For today's purposes, we can use the [arcsine transformation](https://en.wikiped
 
 # ╔═╡ 725425d4-dbfa-4cf6-af71-8100170cd72c
 """
-	powinterval(p, n; atol=0.05)
+	powinterval(p, n; atol=1/n)
 
 Compute binomial 95% confidence intervals.
 
@@ -272,7 +272,7 @@ Compute binomial 95% confidence intervals.
 For `p` within `atol` of 0 or 1, the rule of three is used.
 For all other `p`, the arcsine approximation is used.
 """
-function powinterval(p, n; atol=0.05)
+function powinterval(p, n; atol=1/n)
 
 	if (1-p) < atol
 		lower = 1-3/n
@@ -353,8 +353,8 @@ count(issingular(sim))
 # ╠═a2e16602-7d63-4fce-aed0-55a40febd3e7
 # ╠═ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
 # ╠═b87b7850-8660-4730-a557-2e64d73d36d0
-# ╠═6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
 # ╟─c4fadf55-c23d-435b-b6b5-40a7301674a6
+# ╠═6cfe68cd-7183-4aa6-8011-ef5dd06ff0f7
 # ╟─079f3bb8-511d-4993-8189-80df04ef3fc2
 # ╠═725425d4-dbfa-4cf6-af71-8100170cd72c
 # ╠═f736b605-e460-409d-87f0-3847ac39d174
