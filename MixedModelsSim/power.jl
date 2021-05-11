@@ -25,8 +25,10 @@ end
 md"""
 # Simulating an Experiment from Scratch using `MixedModels.jl` and `MixedModelsSim.jl`
 
-Today, we're using Pluto notebooks. If you used Jupyter/iPython notebooks, this will seem similar. Pluto has two really cool advantages over those:
-1. Pluto is *reactive*: if I change a variable up at the top of the notebook, the changes propogate throughout the notebook. So there's no mixed up state from doing things out of order.
+*Phillip M. Alday, 2021-05-11*
+
+Today, we're using Pluto notebooks. If you've used Jupyter/iPython notebooks, this will seem similar. Pluto has two really cool advantages over those:
+1. Pluto is *reactive*: if I change a variable anywhere in the notebook, the changes propogate throughout the notebook. So there's no mixed up state from doing things out of order.
 2. Pluto files are stored as plain-text Julia-language files, so you can read and run their source code like any other source code file.
 
 First, some setup
@@ -116,9 +118,6 @@ vc = VarCorr(m0)
 md"""
 For each grouping variable (subjects and items), there are two major components: the standard deviations ahd the correlations.
 
-For this example, we'll just assume all the correlations and thus the covariances are 0 in order to make things simple.
-Then we only have to worry about the standard deviations.
-
 Let's assume that the variability
 - between items
   - in the intercept is 1.3 times the residual variability
@@ -163,7 +162,7 @@ Note that we have to specify them in the same order as in the output from `VarCo
 begin
 	# we make a copy to avoid changing the results above with reactivity
 	m1 = deepcopy(m0)
-	update!(m1, re_item, re_subj)
+	update!(m1, re_subj, re_item)
 	VarCorr(m1)
 end
 

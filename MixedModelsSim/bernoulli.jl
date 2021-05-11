@@ -17,6 +17,8 @@ end
 md"""
 # Simulating an Unbalanced Bernoulli Experiment from Scratch using `MixedModels.jl` and `MixedModelsSim.jl`
 
+*Phillip M. Alday, 2021-05-11*
+
 Today, we're using Pluto notebooks. If you used Jupyter/iPython notebooks, this will seem similar. Pluto has two really cool advantages over those:
 1. Pluto is *reactive*: if I change a variable up at the top of the notebook, the changes propogate throughout the notebook. So there's no mixed up state from doing things out of order.
 2. Pluto files are stored as plain-text Julia-language files, so you can read and run their source code like any other source code file.
@@ -207,7 +209,7 @@ Let's start small and simulate a single dataset and see if we're able to recover
 # ╔═╡ aa4ddaa2-f9b3-40b1-8f41-3d7478476948
 begin
 	# making a deepcopy here so that our previews above aren't impacted
-	m_test = simulate!(MersenneTwister(42), deepcopy(m0); β=β)
+	m_test = simulate!(MersenneTwister(42), deepcopy(m0); β=β, θ=θ)
 	refit!(m_test)
 end
 

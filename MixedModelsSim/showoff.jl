@@ -128,9 +128,6 @@ get!(cache, (contrasts, n_sim, n_subj, n_item, s_item_intercept, s_item_context,
 	return DataFrame(power_table(sim))
 end
 
-# ╔═╡ 1e67dd66-55bf-48b6-a1b1-896cb833b9a3
-coefnames(m0)
-
 # ╔═╡ Cell order:
 # ╟─f9949a62-b108-11eb-37d6-bb0790f7899a
 # ╟─da2e5642-3188-4f0d-8a8a-402a64860366
@@ -152,7 +149,6 @@ coefnames(m0)
 # ╟─fcbf836f-5e8e-4763-9c0f-ad9f9c3b5776
 # ╟─bc85fffd-d37c-4249-b119-cb2d3d625f39
 # ╟─a85ac4b0-1259-4a87-ac20-cca6a8924ba4
-# ╟─1e67dd66-55bf-48b6-a1b1-896cb833b9a3
 # ╠═3287c778-ce89-42e7-b6c9-44da71590b71
 # ╟─701566c0-e28d-4e7f-bc45-191b533c8c2c
 # ╟─b6a549f9-acff-40a1-98fd-41affd1fd3c3
