@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.14.5
+# v0.14.8
 
 using Markdown
 using InteractiveUtils
@@ -19,6 +19,7 @@ begin
 	using MixedModels, MixedModelsSim
 	using PlutoUI
 	using Random
+	PlutoUI.TableOfContents()
 end
 
 # ╔═╡ 288bb980-b105-11eb-1687-73eaf51c6e80
@@ -63,10 +64,10 @@ For specifying the number of items and subjects, we're going to use a bit of int
 """
 
 # ╔═╡ 0ea1d41b-d225-4082-aa6b-5bc80beda96b
-@bind n_subj Slider(10:100; default=40, show_value=true)
+@bind n_subj NumberField(10:100; default=40)
 
 # ╔═╡ 9c989bb9-8a7e-4746-9919-1abb20a9ddef
-@bind n_item Slider(10:100; default=40, show_value=true)
+@bind n_item NumberField(10:100; default=40)
 
 # ╔═╡ 823f06a3-1ba6-4c5f-b842-d2dee7bc8d3e
 begin
@@ -235,7 +236,7 @@ In MixedModels.jl, you can specify different parameter values, such as the ones
 """
 
 # ╔═╡ a2e16602-7d63-4fce-aed0-55a40febd3e7
-@bind n_sim Slider(10:1000; default=100, show_value=true)
+@bind n_sim NumberField(10:1000; default=100)
 
 # ╔═╡ ea3448a9-cb0c-4a8e-8ee0-ccf883f27511
 sim = parametricbootstrap(MersenneTwister(12321), n_sim, m0; β=β, σ=σ, θ=θ)
@@ -312,6 +313,17 @@ If we're not doing a study on individual differences, that's probably okay, but 
 # ╔═╡ a0fd546d-4457-4d33-9677-d724254ffdf4
 count(issingular(sim))
 
+# ╔═╡ 9b16d5cd-8972-4a74-a711-349433c0f4c3
+md"""
+
+## Acknowledgements
+
+The development of this package was supported by the Center for Interdisciplinary Research (ZiF), Bielefeld, as part of the Cooperation Group "Statistical models for psychological and linguistic data".
+
+Douglas Bates and Lisa DeBruine have contributed substantially to this package; while Reinhold Kliegl provided invaluable feedback.
+
+"""
+
 # ╔═╡ Cell order:
 # ╟─288bb980-b105-11eb-1687-73eaf51c6e80
 # ╠═d951e119-09f7-4b4e-a155-7e1ce0459317
@@ -360,3 +372,4 @@ count(issingular(sim))
 # ╠═89446f45-5cbf-4644-b9ff-a0158f4b696a
 # ╟─0e5bbd3e-7373-4ed1-ad3e-354f3453983a
 # ╠═a0fd546d-4457-4d33-9677-d724254ffdf4
+# ╟─9b16d5cd-8972-4a74-a711-349433c0f4c3
