@@ -1,0 +1,10 @@
+[deps]
+AlgebraOfGraphics = "cbdf2221-f076-402e-a563-3d30da359d67"
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+MixedModels = "ff71e718-51f3-5ec2-a782-8ffcbfa3c316"
+MixedModelsMakie = "b12ae82c-6730-437f-aff9-d2c38332a376"
+MixedModelsPermutations = "647c4018-d7ef-4d03-a0cc-8889a722319e"
+Pluto = "c3e4b0f8-55cb-11ea-2926-15256bba5781"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
