@@ -82,6 +82,9 @@ let
 	effects(design, m1; typical=median)
 end
 
+# ╔═╡ 8e59155f-9a8a-4135-b438-ce3d0b286800
+
+
 # ╔═╡ ed86a0a4-ad35-417b-bf6d-9c9c8a960771
 md"""## Predictions and Effects are Invariant to Contrast Coding"""
 
@@ -166,6 +169,7 @@ end
 # ╠═06ab92be-2be6-4397-960f-93990d61e202
 # ╠═a4b97c35-f10f-401f-8577-4882bc580521
 # ╠═54ddf5cd-a74e-433d-9b55-77b7336efdd0
+# ╠═8e59155f-9a8a-4135-b438-ce3d0b286800
 # ╟─ed86a0a4-ad35-417b-bf6d-9c9c8a960771
 # ╠═783c8fa1-b57d-4225-9ff3-1a743a756fea
 # ╠═6ab0d433-c25e-4a50-bbc7-79fb8c8feab0
